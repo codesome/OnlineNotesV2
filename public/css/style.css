@@ -1,0 +1,28 @@
+body{
+    background-image: url(/img/bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.row-cen {
+    text-align:center;
+}
+
+.col-cen {
+    display:inline-block;
+    float:none;
+}
+
+#signup{
+    border-top: 1px solid #00cc00;
+}
+#login{
+    border-top: 1px solid #00ccff;
+}
+
+.borderBottom-green{
+    border-bottom: 4px solid #00cc00;
+}
+.borderBottom-blue{
+    border-bottom: 4px solid #00ccff;
+}
