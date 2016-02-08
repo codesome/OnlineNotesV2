@@ -2,6 +2,7 @@ body{
     background-image: url(/img/bg.jpg);
     background-repeat: no-repeat;
     background-size: cover;
+    color: white;
 }
 
 .row-cen {
@@ -25,4 +26,8 @@ body{
 }
 .borderBottom-blue{
     border-bottom: 4px solid #00ccff;
+}
+
+input {
+    color: black;
 }

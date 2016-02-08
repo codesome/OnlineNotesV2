@@ -24,7 +24,7 @@
       <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
         <li><a href="#" id="create" title="Sign Up"><span class="glyphicon glyphicon-user"></span>&nbsp;Create</a></li>
         <li><a href="/profile/list" id="read" title="Login"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;My Notes</a></li>
-        <li><a href="/profile/logout" title="Login">Log out</a></li>  
+          <li><a href="/profile/logout" title="Login">Log out</a></li>
       </ul>
     </div>
 </div>
@@ -34,14 +34,22 @@
 <form id="new-note" action="/profile/createnote" method="post" style="display:none;">    
     <fieldset>
         <label>Name of the note</label><br>
-        <input name="name" placeholder="Enter name" required>    
+        <input style="color:black" name="name" placeholder="Enter name" required>    
     </fieldset> 
     <fieldset>
         <label>Content</label><br>
-        <textarea name="content" placeholder="Enter name"></textarea>    
+        <textarea style="color:black" name="content" placeholder="Enter name"></textarea>    
     </fieldset> 
 <button style="color:black" type="submit" value="submit" form="new-note">Create</button> 
 </form>
-<button id="refresh" style="display:none;color:black;">refresh</button>    
+    
+<fieldset id="note-content" style="display:none;">
+<button id="refresh">refresh</button>    
+</fieldset>
+    
+<fieldset id="aNote">    
+Name: <%=name%><br>    
+Content: <%=content%>
+</fieldset>    
 </body>
 </html>

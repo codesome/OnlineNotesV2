@@ -7,7 +7,7 @@
     <link rel='stylesheet' href='/css/style.css'>
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.js" type="text/javascript"></script>
-	<script src="/js/jquery.js" type="text/javascript"></script>
+	<script src="/js/jquery-home.js" type="text/javascript"></script>
     <title>Notes..</title>
 </head>
 
@@ -31,5 +31,35 @@
 </div>
 </div>
 </div>
+    
+<!-- sign up -->
+<form id="sign-up" action="/signup" method="post">
+    Signup
+    <fieldset>
+        <label>Username:</label><br>
+        <input name="username" type="text" placeholder="Username">
+    </fieldset>
+    <fieldset>
+        <label>Password:</label><br>
+        <input name="password" type="password" placeholder="password">
+    </fieldset>    
+<button type="submit" value="submit" form="sign-up" style="color:black;">Signup</button>
+</form>
+<!-- sign up -->
+    
+<!-- login -->
+<form id="log-in" action="/login" method="post">
+    login
+    <fieldset>
+        <label>Username:</label><br>
+        <input name="username" type="text" placeholder="Username">
+    </fieldset>
+    <fieldset>
+        <label>Password:</label><br>
+        <input name="password" type="password" placeholder="password">
+    </fieldset>    
+<button type="submit" value="submit" form="log-in" style="color:black;">Signup</button>
+</form>    
+<!-- login -->    
     </body>
 </html>
