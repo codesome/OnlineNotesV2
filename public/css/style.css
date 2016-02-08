@@ -28,6 +28,6 @@ body{
     border-bottom: 4px solid #00ccff;
 }
 
-input {
+input,textarea {
     color: black;
 }

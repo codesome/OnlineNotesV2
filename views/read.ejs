@@ -38,18 +38,31 @@
     </fieldset> 
     <fieldset>
         <label>Content</label><br>
-        <textarea style="color:black" name="content" placeholder="Enter name"></textarea>    
+        <textarea name="content" placeholder="Enter name"></textarea>    
     </fieldset> 
-<button style="color:black" type="submit" value="submit" form="new-note">Create</button> 
+<button type="submit" value="submit" form="new-note">Create</button> 
 </form>
-    
-<fieldset id="note-content" style="display:none;">
-<button id="refresh">refresh</button>    
-</fieldset>
-    
+
+   
 <fieldset id="aNote">    
-Name: <%=name%><br>    
-Content: <%=content%>
-</fieldset>    
+    Name: <%=name%><br>    
+    Content: <%=content%>
+<button id="edit" style="color:black;">edit</button>
+</fieldset>  
+
+<span id="edit-form" style="display:none;">    
+<form action="/profile/edit/<%=id%>" id="edit-note" method="post">     
+    <fieldset>
+        <label>Name of the note</label><br>
+        <textarea name="editedName" id="editedName" placeholder="Enter name" required><%=name%></textarea>    
+    </fieldset> 
+    <fieldset>
+        <label>Content</label><br>
+        <textarea name="editedContent" id="editedContent" placeholder="Enter content"><%=content%></textarea>    
+    </fieldset>     
+    <button type="submit" value="submit" form="edit-note" style="color:black" id="done">Done</button> <br>
+</form>     
+<button id="cancel-edit" style="color:black">discard</button>
+</span>    
 </body>
 </html>

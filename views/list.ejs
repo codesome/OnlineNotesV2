@@ -44,7 +44,7 @@
 <button id="refresh" style="display:none;color:black;">refresh</button>    
 <fieldset id="note-content"> 
 <% for(i=0;i<rows.length;i++){ %>   
-    <br><%=rows[i].name%>&nbsp; <a href="/profile/readnote/<%=rows[i].id%>">read</a>
+    <br><%=rows[i].name%>&nbsp; <a href="/profile/readnote/<%=rows[i].id%>">read</a>&nbsp;&nbsp;<a href="/profile/deletenote/<%=rows[i].id%>">delete</a>
 <% } %>    
 </fieldset>    
 </body>
