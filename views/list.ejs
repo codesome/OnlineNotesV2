@@ -43,8 +43,15 @@
 </form>
 <button id="refresh" style="display:none;color:black;">refresh</button>    
 <fieldset id="note-content"> 
+<% if(rows.length) { %>    
 <% for(i=0;i<rows.length;i++){ %>   
-    <br><%=rows[i].name%>&nbsp; <a href="/profile/readnote/<%=rows[i].id%>">read</a>&nbsp;&nbsp;<a href="/profile/deletenote/<%=rows[i].id%>">delete</a>
+    <br><%=rows[i].name%>&nbsp; <a href="/profile/readnote/<%=rows[i].id%>">open</a>&nbsp;&nbsp;<a href="/profile/deletenote/<%=rows[i].id%>">delete</a>
+<% } %>    
+<% } else { %> 
+    <span id="no-note">
+        No notes.....<br>
+        <button id="noN-create" style="color:black;">Create one</button>
+    </span>  
 <% } %>    
 </fieldset>    
 </body>

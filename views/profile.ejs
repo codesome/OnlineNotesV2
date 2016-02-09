@@ -42,6 +42,20 @@
     </fieldset> 
 <button style="color:black" type="submit" value="submit" form="new-note">Create</button> 
 </form>
-<button id="refresh" style="display:none;color:black;">refresh</button>    
+<button id="refresh" style="display:none;color:black;">refresh</button>  
+    
+    
+<fieldset id="recent-notes"> 
+<% if(rows.length) { %>    
+<% for(i=rows.length-1;i>=0;i--){ %>   
+    <br><%=rows[i].name%>&nbsp; <a href="/profile/readnote/<%=rows[i].id%>">read</a>&nbsp;&nbsp;<a href="/profile/deletenote/<%=rows[i].id%>">delete</a>
+<% } %>    
+<% } else { %> 
+    <span id="no-note">
+        No notes.....<br>
+        <button id="noN-create" style="color:black;">Create one</button>
+    </span>
+<% } %>    
+</fieldset>    
 </body>
 </html>

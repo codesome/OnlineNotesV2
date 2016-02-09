@@ -46,8 +46,9 @@
    
 <fieldset id="aNote">    
     Name: <%=name%><br>    
-    Content: <%=content%>
-<button id="edit" style="color:black;">edit</button>
+    Content: <%=content%><br>
+    <button id="edit" style="color:black;">edit</button><br>
+    <a href="/profile/deletenote/<%=id%>">delete</a>
 </fieldset>  
 
 <span id="edit-form" style="display:none;">    
@@ -63,6 +64,33 @@
     <button type="submit" value="submit" form="edit-note" style="color:black" id="done">Done</button> <br>
 </form>     
 <button id="cancel-edit" style="color:black">discard</button>
+</span> 
+    
+<!-- comments -->
+<span id="comment-form">    
+    <input id="comment" placeholder="max 70 characters" required>
+    <button style="color:black;" id="post-comment">post</button>
 </span>    
+<script>
+$(document).ready(function(){
+    $("#post-comment").click(function(){
+        var id = <%=id%> ;
+        var c = $("#comment").val() ;
+        console.log(id);
+        console.log(c);
+        $.post("/profile/comment/"+id , {comment:c} ,function(data){
+                    $("#comment-space").prepend("<br>Comment: "+data);
+                    $("#comment").val("");
+               });
+    });
+});    
+</script>    
+<br>
+<span id="comment-space">
+<% for(i=cRow.length-1;i>=0;i--){ %>
+    <br> Comment: <%=cRow[i].comment%>
+<% } %>    
+</span>    
+<!-- comments -->    
 </body>
 </html>
