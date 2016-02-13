@@ -47,7 +47,7 @@ router = {
         return string;
     },
     
-    cookieKey : "T#!$isTh#$#(retK#Yf0rt##cookie$0^!in#N0TE$~~v2",
+    cookieKey : "T#!$isTh#$#(retK#Yf0rt##cookie$0^!in#N0TE$~~v2bR0n0U$#$#@R(h!^g",
     
     emailKey : "isTh#$#(retK#Yf0rtcookie$0^!in#N0TE$~~v2f0r#miILAPi"
           
