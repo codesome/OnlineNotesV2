@@ -29,7 +29,27 @@ router = {
         }
     },
     
-    cookieKey : "T#!$isTh#$#(retK#Yf0rt##cookie$0^!in#N0TE$~~v2"
+    adminStatus: function(req , obj ,key) {
+        if(req.cookies.admin){
+            return obj.decrypt(req.cookies.admin,key);
+        }
+        else{
+            return 0;
+        }
+    },
+    
+    randomString: function(n){
+        var a = "PBNMmnbv789cxQTYUIOzasWERdfgGHJKL234ZXChjklpoiuyASDFVtrewq1560";
+        var string = "" ,i;
+        for(i=0;i<n;i++){
+            string+=a[Math.floor(Math.random()*1000)%62];
+        }
+        return string;
+    },
+    
+    cookieKey : "T#!$isTh#$#(retK#Yf0rt##cookie$0^!in#N0TE$~~v2",
+    
+    emailKey : "isTh#$#(retK#Yf0rtcookie$0^!in#N0TE$~~v2f0r#miILAPi"
           
 }
 

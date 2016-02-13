@@ -43,14 +43,36 @@
 <button type="submit" value="submit" form="new-note">Create</button> 
 </form>
 
-   
+<!-- a note -->   
 <fieldset id="aNote">    
     Name: <%=name%><br>    
     Content: <%=content%><br>
     <button id="edit" style="color:black;">edit</button><br>
     <a href="/profile/deletenote/<%=id%>">delete</a>
 </fieldset>  
+    
+    <button id="generate-p-link" style="color:black">Generate public link</button><br>
+    <input id="public-link"><br><br>
+    
+    <button id="delete-p-link" style="color:black;">Delete public link</button><br>
+    
+<script>
+$(document).ready(function(){
+    $("#generate-p-link").click(function(){
+        $.post('/profile/p',{id:<%=id%>} ,function(data){
+            $("#public-link").val(data);
+        });
+    });
+    $("#delete-p-link").click(function(){
+        $.post('/profile/d',{id:<%=id%>} ,function(data){
+            $("#public-link").val(' ');
+        });
+    });    
+});    
+</script>    
+<!-- a note -->    
 
+    <!-- edit note -->
 <span id="edit-form" style="display:none;">    
 <form action="/profile/edit/<%=id%>" id="edit-note" method="post">     
     <fieldset>
@@ -65,6 +87,7 @@
 </form>     
 <button id="cancel-edit" style="color:black">discard</button>
 </span> 
+    <!-- edit note -->
     
 <!-- comments -->
 <span id="comment-form">    
@@ -73,15 +96,22 @@
 </span>    
 <script>
 $(document).ready(function(){
-    $("#post-comment").click(function(){
+    
+    function sendcomment(){
         var id = <%=id%> ;
         var c = $("#comment").val() ;
-        console.log(id);
-        console.log(c);
         $.post("/profile/comment/"+id , {comment:c} ,function(data){
                     $("#comment-space").prepend("<br>Comment: "+data);
                     $("#comment").val("");
                });
+    }
+    
+    $("#comment").keypress(function(event){
+        if( event.which == 13 ) sendcomment();
+    });
+    
+    $("#post-comment").click(function(){ 
+        sendcomment();
     });
 });    
 </script>    

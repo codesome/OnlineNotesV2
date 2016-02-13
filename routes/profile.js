@@ -163,7 +163,7 @@ router.get('/deletenote/:id' , function(req,res,next){
 router.get('/logout' , function(req,res,next){
     res.clearCookie('user');
     res.redirect('/');
-})
+});
 
 router.post('/edit/:id' , function(req,res,next){
     if(!obj.siStatus(req,obj,obj.cookieKey)){
@@ -212,5 +212,47 @@ router.post('/comment/:id' , function(req,res,next){
                     );
             });
 });
+
+router.post('/p' , function(req,res,next){
+    var noteid = req.body.id ;
+    var userid = obj.siStatus(req,obj,obj.cookieKey);
+    
+    con.query(
+        'select * from public where userid=? and noteid=?',
+        [userid,noteid],
+        function(err,rows){
+            if(rows.length){
+                console.log('one');
+                res.send("http://"+req.hostname+":3000/p/"+rows[0].str);
+            }
+            else{
+                var str = obj.randomString(7);
+                con.query(
+                    'insert into public set ?',
+                    {str:str , userid:userid , noteid:noteid},
+                    function(err,row){
+                        console.log('two');
+                        res.send("http://"+req.hostname+":3000/p/"+str);
+                    }
+                );
+            }
+        }
+    );
+});
+
+router.post('/d' , function(req,res,next){
+    var noteid = req.body.id ;
+    var userid = obj.siStatus(req,obj,obj.cookieKey);
+    
+    con.query(
+        'delete from public where userid=? and noteid=?',
+        [userid,noteid],
+        function(err){
+            if(err) throw err;
+            res.send(1);
+        }
+    );
+});
+ 
 
 module.exports = router;
