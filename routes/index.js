@@ -42,11 +42,13 @@ function mail(to,subject,content){
 }
 
 router.get('/test',function(req,res){
-res.send('testing');
+mail("ganeshdv.17@gmail.com","testing","<img src='http://localhost:3000/tested' height='1px' width='1px'>");
+    res.send('check');
 });
 
 router.get('/tested',function(req,res){
-    con.query('insert into users set ?',{username:"good"},function(err){});
+    console.log('mail viewed');
+    res.send('done');
 });
 
 router.get('/', function(req, res, next) {
@@ -60,11 +62,13 @@ router.get('/', function(req, res, next) {
 
 router.post('/check/:x' , function(req,res,next){
     var x = req.params.x, s=req.body.s;
+    console.log(s);
     if(x=="Username" || x=="Email"){
         con.query(
             'select * from users where '+x+'=?',
             [s],
             function(err,rows){
+                console.log(rows);
                 if(rows.length){
                     res.send(x+" already exists");
                 }
@@ -142,7 +146,7 @@ router.get('/verify/:id/:username/:email/:password' , function(req,res,next){
             }
             else if(userRow[0].verified == 'yes'){
                 res.cookie('user' , obj.encrypt(id , obj.cookieKey));
-                res.render('profile' , {rows: []});
+                res.render('profile' , {rows: [] ,urows:[], greeting:obj.greeting(userRow[0].username)});
             }
             else{
                 userRow[0].verified = 'yes';
@@ -150,13 +154,13 @@ router.get('/verify/:id/:username/:email/:password' , function(req,res,next){
                 con.query('update users set verified="yes" where username=?',[username],function(err){if(err)throw err;});
                 
                 con.query(
-                    "create table "+id+" ( id int(5) not null auto_increment, name text , content text, primary key (id) )" ,
+                    "create table "+id+" ( id varchar(20) , name text , content text, updates int, primary key (id) )" ,
                     function(err){
                         if(err) throw err;
                     }
                 );
                 res.cookie('user' , obj.encrypt(id , obj.cookieKey));
-                res.render('profile' , {rows: []});
+                res.render('profile' , {rows: [],urows:[],greeting:obj.greeting(userRow[0].username)});
             }
         }
     );

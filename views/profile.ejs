@@ -14,7 +14,10 @@
 </head>
 
 <body>
-<div class="site-name"><a style="color:white;text-decoration:none;" href="/">ONotes</a></div>
+<div class="site-name-area">
+  <a class="site-name" style="text-decoration:none" href="/">ONotes</a>
+  <span class="username"><%=greeting%></span>
+</div>
     <nav class="navbar navbar-default">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
         <div class="collapse navbar-collapse" id="Navbar">
@@ -23,7 +26,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
-        <li><a href="#" id="create" title="Sign Up"><span class="glyphicon glyphicon-user"></span>&nbsp;Create</a></li>
+        <li><a href="/profile/createpage" id="create" title="Sign Up"><span class="glyphicon glyphicon-user"></span>&nbsp;Create</a></li>
         <li style="margin-right:1.5em;"><a href="/profile/list" id="read" title="Login"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;My Notes</a></li>
         <li><a href="/profile/logout" id="logout" title="Login">Log out</a></li>
             </ul>
@@ -48,7 +51,58 @@
 </div>         
 <!-- Create note -->
     
+<!-- main body -->
+<div class="container-fluid">    
+<div class="row row-cen">
+
+    <!--Recently created-->
+    <div class="col-lg-4 col-cen re-cr-no" style="margin-left:10em;">
+        <div class="row">
+            <h3 class="main-body-titles col-lg-8">Recently created notes</h3>
+        </div><br>
+        <fieldset id="recent-notes"> 
+            <div class="row">
+            <div class="col-lg-12 scroll">
+            <% if(rows.length) { %>    
+            <% for(i=rows.length-1;i>=0;i--){ %>   
+                <p style="border-bottom:1px solid #00ccff;"><span class="note-name"><%=rows.length-i%>.&nbsp;<%=rows[i].name%></span><a href="/profile/readnote/<%=rows[i].id%>" class="note-read btn btn-default">Open</a></p><br><br>
+            <% } %>    
+            <% } else { %> 
+            <span style="font-size:140%">
+                No notes yet.....
+            </span>&emsp;&emsp;<a href="/profile/createpage" class="create-one">Create one</a>
+            <% } %>  
+            </div>
+        </div>  
+        </fieldset>
+    </div>
+    <!--Recently created-->
     
+    <!--Recently updated-->
+    <div class="col-lg-4 col-cen re-up-no">
+        <div class="row">
+            <h3 class="main-body-titles col-lg-8">Recently edited notes</h3>
+        </div><br>
+        <fieldset id="recent-notes"> 
+            <div class="row">
+            <div class="col-lg-12 scroll">
+            <% if(urows.length) { %>    
+            <% for(i=urows.length-1;i>=0;i--){ %>   
+                <p style="border-bottom:1px solid #00ccff;"><span class="note-name"><%=urows.length-i%>.&nbsp;<%=urows[i].name%></span><a href="/profile/readnote/<%=urows[i].id%>" class="note-read btn btn-default">Open</a></p><br>
+            <% } %>    
+            <% } else { %> 
+            <span style="font-size:140%">
+                No notes.....
+            </span>
+            <% } %>  
+            </div>
+        </div>  
+        </fieldset>
+    </div>
+    <!--Recently updated-->
+</div>
+</div>    
+<!-- main body -->    
 <fieldset id="recent-notes" style="display:none"> 
 <% if(rows.length) { %>    
 <% for(i=rows.length-1;i>=0;i--){ %>   

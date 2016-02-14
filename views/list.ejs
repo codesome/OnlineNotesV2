@@ -8,51 +8,55 @@
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.js" type="text/javascript"></script>
 	<script src="/js/jquery-profile.js" type="text/javascript"></script>
+	<script src="/js/jquery-home.js" type="text/javascript"></script>
     <title>Notes..</title>
 </head>
 
 <body>
-<div class="container-fluid">    
-<div class="row">
-<div class="navbar navbar-inverse col-lg-12" style="background-color:black;border-radius:0;margin-bottom:-1px;">
-<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-	  <div class="collapse navbar-collapse" id="Navbar">
-    <ul class="nav navbar-nav navbar-left">
-        <li><a href="/" title="Home" style="font-size:160%;"><span class="glyphicon glyphicon-home"></span></a></li>
-      </ul>
+<div class="site-name-area">
+  <a class="site-name" style="text-decoration:none" href="/">ONotes</a>
+  <span class="username"><%=greeting%></span>
+</div>
+    <nav class="navbar navbar-default">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        <div class="collapse navbar-collapse" id="Navbar">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="/" title="Home" style="font-size:160%;"><span class="glyphicon glyphicon-home"></span></a></li>
+            </ul>
 
-      <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
-        <li><a href="#" id="create" title="Sign Up"><span class="glyphicon glyphicon-user"></span>&nbsp;Create</a></li>
-          <li><a href="/profile/logout" title="Login">Log out</a></li>
-      </ul>
-    </div>
-</div>
-</div>
+            <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
+        <li style="margin-right:1.5em;"><a href="/profile/createpage" id="create" title="Sign Up"><span class="glyphicon glyphicon-user"></span>&nbsp;Create</a></li>
+        <li><a href="/profile/logout" id="logout" title="Login">Log out</a></li>
+            </ul>
+        </div>
+    </nav>
+
+<div class="row row-cen">
+<div class="col-lg-4 col-cen">
+    <div class="row">
+        <h3 class="main-body-titles">Recently created notes</h3>
+    </div><br>
+    <fieldset id="recent-notes"> 
+        <div class="row">
+            <div class="col-lg-12">
+            <% if(rows.length) { %>    
+            <% for(i=rows.length-1;i>=0;i--){ %>   
+                <p style="border-bottom:1px solid #00ccff;">
+                    <span class="note-name"><%=rows.length-i%>.&nbsp;<%=rows[i].name%></span>
+                    <a href="/profile/deletenote/<%=rows[i].id%>" class="note-delete btn btn-default">Delete</a>
+                    <a href="/profile/readnote/<%=rows[i].id%>" class="note-read btn btn-default">Open</a>
+                </p><br>
+            <% } %>    
+            <% } else { %> 
+                <span style="font-size:140%">
+                No notes yet.....
+                </span>&emsp;&emsp;<a href="/profile/createpage" class="create-one">Create one</a>
+            <% } %>  
+            </div>
+        </div>  
+    </fieldset>
+</div>  
 </div>
     
-<form id="new-note" action="/profile/createnote" method="post" style="display:none;">    
-    <fieldset>
-        <label>Name of the note</label><br>
-        <input style="color:black" name="name" placeholder="Enter name" required>    
-    </fieldset> 
-    <fieldset>
-        <label>Content</label><br>
-        <textarea style="color:black" name="content" placeholder="Enter name"></textarea>    
-    </fieldset> 
-<button style="color:black" type="submit" value="submit" form="new-note">Create</button> 
-</form>
-<button id="refresh" style="display:none;color:black;">refresh</button>    
-<fieldset id="note-content"> 
-<% if(rows.length) { %>    
-<% for(i=0;i<rows.length;i++){ %>   
-    <br><%=rows[i].name%>&nbsp; <a href="/profile/readnote/<%=rows[i].id%>">open</a>&nbsp;&nbsp;<a href="/profile/deletenote/<%=rows[i].id%>">delete</a>
-<% } %>    
-<% } else { %> 
-    <span id="no-note">
-        No notes.....<br>
-        <button id="noN-create" style="color:black;">Create one</button>
-    </span>  
-<% } %>    
-</fieldset>    
 </body>
 </html>

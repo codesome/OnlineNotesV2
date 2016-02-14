@@ -47,6 +47,15 @@ router = {
         return string;
     },
     
+    greeting: function(name){
+        var d = new Date();
+        var h = d.getHours();
+        if(h>=5 && h<=11){ return "Good Morning "+name+"!"}
+        if(h>=12 && h<=16){ return "Good Afternoon "+name+"!"}
+        if(h>=17 && h<=20){ return "Good Evening "+name+"!"}
+        if(h>=21 && h<=4){ return "Good Evening "+name+"!"}
+    },
+    
     cookieKey : "T#!$isTh#$#(retK#Yf0rt##cookie$0^!in#N0TE$~~v2bR0n0U$#$#@R(h!^g",
     
     emailKey : "isTh#$#(retK#Yf0rtcookie$0^!in#N0TE$~~v2f0r#miILAPi"
