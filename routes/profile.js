@@ -68,7 +68,7 @@ router.get('/createpage' , function(req,res,next){
         });
     }
     else{
-        res.send('signin');
+        res.redirect('/');
     }
 });
 
@@ -159,38 +159,27 @@ router.get('/readnote/:id' , function(req,res,next){
                                 con.query('select * from public where noteid=?',
                                          [noteid],
                                          function(err,prow){
-                                    var publiclink , pv;
-                                    if(prow.length){
-                                        pv = 1;
-                                        publiclink = "http://"+req.hostname+":3000/p/"+prow[0].str;
-                                    }
-                                    else{
-                                        pv = 0;
-                                        publiclink = "";
-                                    }
+                                            var publiclink , pv;
+                                            if(prow.length){
+                                                pv = 1;
+                                                publiclink = "http://"+req.hostname+":3000/p/"+prow[0].str;
+                                            }
+                                            else{
+                                                pv = 0;
+                                                publiclink = "";
+                                            }
                                     
-                                    console.log(pv);
-                                    console.log(publiclink);
+                                            res.render('read',{
+                                                name : obj.decrypt(rows[0].name,key),
+                                                content : obj.decrypt(rows[0].content,key),
+                                                id : noteid,
+                                                cRow : cRow,
+                                                greeting: obj.greeting(row[0].username),
+                                                pv:pv,
+                                                publiclink:publiclink
+                                            });
                                     
-                                    res.render('read',{
-                                        name : obj.decrypt(rows[0].name,key),
-                                        content : obj.decrypt(rows[0].content,key),
-                                        id : noteid,
-                                        cRow : cRow,
-                                        greeting: obj.greeting(row[0].username),
-                                        pv:pv,
-                                        publiclink:publiclink
-                                    });
-                                    
-                                });
-                                
-                                /*res.render('read',{
-                                    name : obj.decrypt(rows[0].name,key),
-                                    content : obj.decrypt(rows[0].content,key),
-                                    id : noteid,
-                                    cRow : cRow,
-                                    greeting: obj.greeting(row[0].username)
-                                });*/
+                                        });
                             });
                 });
         });
@@ -227,7 +216,7 @@ router.get('/deletenote/:id' , function(req,res,next){
                 con.query(
                     'drop table n'+noteid ,
                     function(err){if(err)throw err;}
-                );
+                    );
         });
     }
 });
@@ -277,7 +266,6 @@ router.post('/edit/:id' , function(req,res,next){
 
 router.post('/comment/:id' , function(req,res,next){
     var userid = obj.siStatus(req,obj,obj.cookieKey);
-    console.log('ok');
     con.query('select userkey from users where id=?' , 
               [userid] ,
               function(err,rows){

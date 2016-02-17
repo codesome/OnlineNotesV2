@@ -89,7 +89,7 @@ router.post('/signup' , function(req,res,next){
         function(err,Row){
             if(Row.length){
                 res.clearCookie('user');
-                res.render('index',{superroremail: "This Email already exists" , loginerror:"",signupmodal:"show",loginmodal:"hide",superrorusername: ""})
+                res.render('index',{superroremail: "This Email already exists" , loginerror:"",signupmodal:"show",loginmodal:"hide"})
             }
             else{
                                 
@@ -166,7 +166,7 @@ router.post('/login' , function(req,res,next){
                     res.redirect('profile');
                 }
                 else{
-                    res.render('index' , {superroremail:"",superrorusername:"",loginerror:"Invalid Credentials",signupmodal:"hide",loginmodal:"show"});;
+                    res.render('index' , {superroremail:"",loginerror:"Invalid Credentials",signupmodal:"hide",loginmodal:"show"});;
                 }
             });
 });
