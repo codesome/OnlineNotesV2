@@ -7,103 +7,228 @@
     <link rel='stylesheet' href='/css/style.css'>
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.js" type="text/javascript"></script>
-	<script src="/js/jquery-profile.js" type="text/javascript"></script>
+	<script src="/js/jquery-home.js" type="text/javascript"></script>
     <title>Notes..</title>
+    <script>
+                $(document).ready(function(){
+                    $('[data-toggle="popover"]').popover();   
+                });
+            </script>
 </head>
 
 <body>
-<div class="container-fluid">    
-<div class="row">
-<div class="navbar navbar-inverse col-lg-12" style="background-color:black;border-radius:0;margin-bottom:-1px;">
-<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-	  <div class="collapse navbar-collapse" id="Navbar">
-    <ul class="nav navbar-nav navbar-left">
-        <li><a href="/" title="Home" style="font-size:160%;"><span class="glyphicon glyphicon-home"></span></a></li>
-      </ul>
+<div class="site-name-area">
+  <a class="site-name" style="text-decoration:none" href="/">ONotes</a>
+  <span class="username"><%=greeting%></span>
+</div>
+    <nav class="navbar navbar-default">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        <div class="collapse navbar-collapse" id="Navbar">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="/" title="Home" style="font-size:160%;"><span class="glyphicon glyphicon-home"></span></a></li>
+            </ul>
 
-      <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
-        <li><a href="#" id="create" title="Sign Up"><span class="glyphicon glyphicon-user"></span>&nbsp;Create</a></li>
-        <li><a href="/profile/list" id="read" title="Login"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;My Notes</a></li>
-          <li><a href="/profile/logout" title="Login">Log out</a></li>
-      </ul>
-    </div>
-</div>
-</div>
-</div>
-    
-<form id="new-note" action="/profile/createnote" method="post" style="display:none;">    
-    <fieldset>
-        <label>Name of the note</label><br>
-        <input style="color:black" name="name" placeholder="Enter name" required>    
-    </fieldset> 
-    <fieldset>
-        <label>Content</label><br>
-        <textarea name="content" placeholder="Enter name"></textarea>    
-    </fieldset> 
-<button type="submit" value="submit" form="new-note">Create</button> 
-</form>
-
+            
+            <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
+                <li><a href="/profile/createpage" id="create" title="Sign Up"><span class="glyphicon glyphicon-user"></span>&nbsp;Create</a></li>
+                <li style="margin-right:1.5em;"><a href="/profile/list" id="read" title="Login"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;My Notes</a></li>
+                <li><a href="/profile/logout" id="logout" title="Login">Log out</a></li>
+            </ul>
+            
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><input id="public-link" class="form-control" style="margin:-0.4em 0;width:115%;padding:0.1em;<%if(!pv){%>display:none;<%}%>" onclick="this.select()"></a></li>
+                
+                <li><a><button id="copy" class="btn btn-default" data-toggle="popover" data-trigger="hover" data-content="Copy to Clipboard" data-placement="bottom" <%if(!pv){%>style="display:none"<%}%>><span class="glyphicon glyphicon-list-alt"></span></button></a></li>
+                
+                <li style="padding:0.65em;"><a href="#" class="btn btn-default" id="delete-p-link" <%if(!pv){%>style="display:none;"<%}%>>Delete public link</a></li>
+                
+                <li style="padding:0.65em 3em;"><a href="#" class="btn btn-default" id="generate-p-link" <%if(pv){%>style="display:none;"<%}%>>Generate public link</a></li>
+            </ul>
+            
+            <% if(pv){ %>
+                <script>
+                $(document).ready(function(){
+                    
+                    function clip(text) {
+                        var copyElement = document.createElement('input');
+                        copyElement.setAttribute('type', 'text');
+                        copyElement.setAttribute('value', text);
+                        copyElement = document.body.appendChild(copyElement);
+                        copyElement.select();
+                        try {
+                            if(!document.execCommand('copy')) throw 'Not allowed.';
+                        } catch(e) {
+                            copyElement.remove();
+                            console.log("document.execCommand('copy'); is not supported");
+                            prompt('Copy the text below. (ctrl c, enter)', text);
+                        } finally {
+                            if (typeof e == 'undefined') {
+                                copyElement.remove();
+                            }
+                        }
+                    }
+                    
+                    $("#public-link").val("<%=publiclink%>");
+                    
+                    $("#copy").click(function(){
+                        clip($("#public-link").val());
+                    });                      
+                });
+                </script>
+            <% } %>
+            
+            <script>
+                $(document).ready(function(){
+                    var nid = "<%=id%>" ;
+                    $("#generate-p-link").click(function(){
+                        $.post('/profile/p/'+nid,function(data){
+                            $("#public-link").val(data);
+                        });
+                        
+                        function clip(text) {
+                            var copyElement = document.createElement('input');
+                            copyElement.setAttribute('type', 'text');
+                            copyElement.setAttribute('value', text);
+                            copyElement = document.body.appendChild(copyElement);
+                            copyElement.select();
+                            try {
+                                if(!document.execCommand('copy')) throw 'Not allowed.';
+                            } catch(e) {
+                                copyElement.remove();
+                                console.log("document.execCommand('copy'); is not supported");
+                                prompt('Copy the text below. (ctrl c, enter)', text);
+                            } finally {
+                                if (typeof e == 'undefined') {
+                                    copyElement.remove();
+                                }
+                            }
+                        }
+                    
+                        $("#copy").click(function(){
+                            clip($("#public-link").val());
+                        }); 
+                        
+                    });
+                    $("#delete-p-link").click(function(){
+                        $.post('/profile/d/'+nid,function(data){
+                            $("#public-link").val(data);
+                        });
+                    });    
+                });    
+            </script>
+        </div>
+    </nav>
 <!-- a note -->   
-<fieldset id="aNote">    
-    Name: <%=name%><br>    
-    Content: <%=content%><br>
-    <button id="edit" style="color:black;">edit</button><br>
-    <a href="/profile/deletenote/<%=id%>">delete</a>
+    <a href="/profile/deletenote/<%=id%>" style="display:none">delete</a>
+<fieldset id="aNote">
+    <div class="row">
+        <div class="col-lg-2">
+            <ul class="nav read-mode-btn">
+                <li>
+                    <button class="btn btn-default" style="float:right;border-top-left-radius:0;border-bottom-left-radius:0"><span class="glyphicon glyphicon-align-right"></span></button>
+                    <button class="btn btn-default" style="float:right;border-radius:0"><span class="glyphicon glyphicon-align-center"></span></button>
+                    <button class="btn btn-default" style="float:right;border-top-right-radius:0;border-bottom-right-radius:0"><span class="glyphicon glyphicon-align-left"></span></button>
+                </li><br><br><br>
+                <li style="float:right">
+                    <button class="btn" id="edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>
+                </li>
+            </ul>
+            
+            <span class="edit-mode" style="float:right">
+                <button type="submit" value="submit" form="edit-note" id="final-edit" class="btn" style="background:#00cc00;color:white"><span class="glyphicon glyphicon-ok"></span></button><br><br>
+                <button id="discard-edit" class="btn" style="background:#cc0000;color:white"><span class="glyphicon glyphicon-remove"></span></button>
+                <script>
+                $(document).ready(function(){
+                    $("#discard-edit").click(function(){
+                        location.reload();
+                    });
+                });
+                </script>
+            </span>
+        </div>
+        <!-- Note -->
+        <div class="col-lg-6">
+            <div class="panel panel-default" style="border-color:#00ccff;">
+                <!--read-->
+                <span class="read-mode">
+                    <div class="panel-heading read-note-name"><%=name%></div>
+                    <div id="note-content" class="panel-body read-note-content"></div>
+                </span>
+                <!--read-->
+                
+                <!-- edit -->
+                <span class="edit-mode">
+                    <form action="/profile/edit/<%=id%>" id="edit-note" method="post">
+                    <div class="panel-heading read-note-name">
+                        <input style="background:transparent;color:white" class="form-control" name="editedName" id="editedName" placeholder="Enter name" value="<%=name%>" required>
+                    </div>
+                    <div class="panel-body edit-note-content">
+                        <textarea style="height:20em" class="form-control" name="editedContent" id="editedContent" placeholder="Enter content"><%=content%></textarea>
+                    </div>
+                    </form>
+                </span>
+                <!-- edit -->
+            </div>
+        </div>
+        <script id="scr" type="text/template"><%=content%></script>
+        <script>
+        $(document).ready(function(){
+            var content = $("#scr").html();
+            content  = content.replace(/\n/g,'<br>');
+            $("#note-content").html(content);
+        });
+        </script>
+        <!-- Note -->
+        
+        <!-- Comments -->
+        <div class="col-lg-3">
+            <legend>Short Notes..&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" data-content="These short notes are private to you and cannot be seen by public through the generated public link. You can delete them when you visit this note later again" data-placement="top" style="font-size:80%">what is this?</a></legend>
+            <div class="input-group">
+                <input id="comment" type="text" class="form-control" maxlength="100" placeholder="max 100 characters including spaces" required>
+                <span class="input-group-btn">
+                    <button id="post-comment" class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button>
+                </span>
+            </div>
+            <span id="comment-space">
+            <% for(i=cRow.length-1;i>=0;i--){ %>
+                <span id="cc<%=cRow[i].id%>">
+            <div class="panel panel-default a-comment">
+                <div class="panel-body">
+                    <a id="<%=cRow[i].id%>" href="#"><span class="glyphicon glyphicon-remove com-rem" style="float:right"></span></a>
+                    <%=cRow[i].comment%>
+                </div>
+            </div>
+                </span>
+                <script>
+                $(document).ready(function(){
+                    $("#<%=cRow[i].id%>").click(function(){
+                      $.post('/profile/comment/d/<%=id%>/<%=cRow[i].id%>',function(data){
+                        if(data){
+                        $("#cc<%=cRow[i].id%>").html("");
+                      }
+                      });
+                    });    
+                });
+                </script>
+            <% } %>
+            </span>
+        </div>
+        <!-- Comments -->
+        <div class="col-lg-1"></div>
+    </div>
 </fieldset>  
-    
-    <button id="generate-p-link" style="color:black">Generate public link</button><br>
-    <input id="public-link"><br><br>
-    
-    <button id="delete-p-link" style="color:black;">Delete public link</button><br>
-    
-<script>
-$(document).ready(function(){
-    $("#generate-p-link").click(function(){
-        $.post('/profile/p',{id:<%=id%>} ,function(data){
-            $("#public-link").val(data);
-        });
-    });
-    $("#delete-p-link").click(function(){
-        $.post('/profile/d',{id:<%=id%>} ,function(data){
-            $("#public-link").val(' ');
-        });
-    });    
-});    
-</script>    
-<!-- a note -->    
-
-    <!-- edit note -->
-<span id="edit-form" style="display:none;">    
-<form action="/profile/edit/<%=id%>" id="edit-note" method="post">     
-    <fieldset>
-        <label>Name of the note</label><br>
-        <textarea name="editedName" id="editedName" placeholder="Enter name" required><%=name%></textarea>    
-    </fieldset> 
-    <fieldset>
-        <label>Content</label><br>
-        <textarea name="editedContent" id="editedContent" placeholder="Enter content"><%=content%></textarea>    
-    </fieldset>     
-    <button type="submit" value="submit" form="edit-note" style="color:black" id="done">Done</button> <br>
-</form>     
-<button id="cancel-edit" style="color:black">discard</button>
-</span> 
-    <!-- edit note -->
-    
-<!-- comments -->
-<span id="comment-form">    
-    <input id="comment" placeholder="max 70 characters" required>
-    <button style="color:black;" id="post-comment">post</button>
-</span>    
 <script>
 $(document).ready(function(){
     
     function sendcomment(){
-        var id = <%=id%> ;
+        var id = "<%=id%>" ;
         var c = $("#comment").val() ;
-        $.post("/profile/comment/"+id , {comment:c} ,function(data){
-                    $("#comment-space").prepend("<br>Comment: "+data);
-                    $("#comment").val("");
-               });
+        if(c!=""){
+            $.post("/profile/comment/"+id , {comment:c} ,function(data){
+                $("#comment-space").prepend("<div class='panel panel-default a-comment'><div class='panel-body'>"+data+"</div></div>");
+                $("#comment").val("");
+            });
+        }
     }
     
     $("#comment").keypress(function(event){
@@ -115,12 +240,7 @@ $(document).ready(function(){
     });
 });    
 </script>    
-<br>
-<span id="comment-space">
-<% for(i=cRow.length-1;i>=0;i--){ %>
-    <br> Comment: <%=cRow[i].comment%>
-<% } %>    
-</span>    
-<!-- comments -->    
+<!-- a note -->    
+  
 </body>
 </html>

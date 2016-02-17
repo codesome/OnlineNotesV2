@@ -21,8 +21,8 @@ router = {
     },
     
     siStatus: function(req , obj ,key) {
-        if(req.cookies.user){
-            return obj.decrypt(req.cookies.user,key);
+        if(req.signedCookies.user){
+            return obj.decrypt(req.signedCookies.user,key);
         }
         else{
             return 0;
@@ -50,10 +50,9 @@ router = {
     greeting: function(name){
         var d = new Date();
         var h = d.getHours();
-        if(h>=5 && h<=11){ return "Good Morning "+name+"!"}
+        if(h>=4 && h<=11){ return "Good Morning "+name+"!"}
         if(h>=12 && h<=16){ return "Good Afternoon "+name+"!"}
-        if(h>=17 && h<=20){ return "Good Evening "+name+"!"}
-        if(h>=21 && h<=4){ return "Good Evening "+name+"!"}
+        if((h>=17 && h<=23)||(h>=0 && h<=3)){ return "Good Evening "+name+"!"}
     },
     
     cookieKey : "T#!$isTh#$#(retK#Yf0rt##cookie$0^!in#N0TE$~~v2bR0n0U$#$#@R(h!^g",

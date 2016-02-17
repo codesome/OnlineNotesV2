@@ -44,7 +44,7 @@
             <div class="col-lg-11 col-cen">
                 <form id="sign-up" action="/signup" method="post" style="text-align:center;">
                     <fieldset>
-                        <label class="su-label"><span class="glyphicon glyphicon-user"></span>&nbsp;Username:</label><br>
+                        <label class="su-label"><span class="glyphicon glyphicon-user"></span>&nbsp;Full Name:</label><br>
                         <input id="username" name="username" class="form-control" type="text" placeholder="Username" required>
                         <p class="error"><%=superrorusername%></p>
                     </fieldset>
@@ -72,7 +72,8 @@
 <script>
 $(document).ready(function(){
     $("#signup-form").modal("<%=signupmodal%>");
-    $("#username").blur(function(){
+    $("#login-form").modal("<%=loginmodal%>");
+    /*$("#username").blur(function(){
         console.log($(this).val());
         $.post('/check/Username',{s:$(this).val()},function(data){
             if(data){
@@ -82,7 +83,7 @@ $(document).ready(function(){
                 $('#usernameerror').html("");
             }
         });
-    });
+    });*/
     $("#email").blur(function(){
         $.post('/check/Email',{s:$(this).val()},function(data){
             if(data){
@@ -97,7 +98,7 @@ $(document).ready(function(){
 </script>
 <!-- Sign up form -->   
     
-<!-- login -->
+<!-- login form-->
 <div class="container-fluid">
     <div id="login-form" style="margin-top:5em;" class="modal fade" role="dialog">
       <div class="modal-dialog">
@@ -111,12 +112,12 @@ $(document).ready(function(){
             <div class="col-lg-11 col-cen">
                 <form id="log-in" action="/login" method="post">
                     <fieldset>
-                        <label class="su-label"><span class="glyphicon glyphicon-user"></span>&nbsp;Username:</label><br>
-                        <input name="username" class="form-control" type="text" placeholder="Username" required>
-                    </fieldset>
+                        <label class="su-label"><span class="glyphicon glyphicon-user"></span>&nbsp;Email:</label><br>
+                        <input name="email" class="form-control" type="text" placeholder="Your registered email id" required>
+                    </fieldset><br>
                     <fieldset>
                         <label class="su-label">Password:</label><br>
-                        <input name="password" class="form-control" type="password" placeholder="Select your password for this site" required>
+                        <input name="password" class="form-control" type="password" placeholder="Your password for this site" required>
                     </fieldset>   
                     <p class="error"><%=loginerror%></p>  
                     <button class="btn btn-info form-btn" type="submit" value="submit" form="log-in">Login</button>
@@ -127,7 +128,8 @@ $(document).ready(function(){
           </div>
         </div>
     </div> 
-</div>   
+</div>  
+<!-- login form -->    
    
     </body>
 </html>

@@ -7,7 +7,6 @@
     <link rel='stylesheet' href='/css/style.css'>
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.js" type="text/javascript"></script>
-	<script src="/js/jquery-profile.js" type="text/javascript"></script>
 	<script src="/js/jquery-home.js" type="text/javascript"></script>
     <title>Notes..</title>
     
@@ -42,13 +41,21 @@
       </fieldset> <br>
       <fieldset style="text-align:left">
         <label class="c-n-label">Content</label><br>
-        <textarea name="content" class="form-control" style="height:20em;border-radius:0" placeholder="Enter content"></textarea>    
+        <textarea name="content" id="note-content" class="form-control" style="height:20em;border-radius:0" placeholder="Enter content"></textarea>    
       </fieldset> 
-      <button class="form-btn" type="submit" value="submit" form="new-note">Create</button> 
+      <button class="form-btn" id="create-n" type="submit" value="submit" form="new-note">Create</button> 
     </form>
   </div>
 </div>         
 <!-- Create note -->
+    
+    <script>
+    $(document).ready(function(){
+        $("#create-n").click(function(){
+            console.log($("#note-content").val());
+        });
+    });
+    </script>
     
    
 </body>

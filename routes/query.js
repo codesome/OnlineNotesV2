@@ -40,7 +40,7 @@ router.get('/tables' , function(req,res,next){
         for(i=0;i<rows.length;i++){
             var name = rows[i].Tables_in_onlinenotesv2;
             if(name=='users'||name=='signups'||name=='notes'||name=='public'){continue;}
-            content+= name+" : <a href="+"'http://"+req.hostname+":3000/query/tables/delete/"+name+"' > delete </a>&emsp;<a href="+"'http://"+req.hostname+":3000/query/tables/view/"+name+"' > view </a><br>"
+            content+= name+" : <a href="+"'http://"+req.hostname+":3000/query/tables/delete/"+name+"' > delete </a>&emsp;<a href="+"'http://"+req.hostname+":3000/query/tables/view/"+name+"' > view </a>&emsp;<a href="+"'http://"+req.hostname+":3000/query/tables/truncate/"+name+"' > truncate </a><br>"
         }
         content+= "<br><br>Users : <a href="+"'http://"+req.hostname+":3000/query/tables/truncate/users' > truncate </a>&emsp;<a href="+"'http://"+req.hostname+":3000/query/tables/view/users' > view </a><br>";
         content+= "Signups : <a href="+"'http://"+req.hostname+":3000/query/tables/truncate/signups' > truncate </a>&emsp;<a href="+"'http://"+req.hostname+":3000/query/tables/view/signups' > view </a><br>";

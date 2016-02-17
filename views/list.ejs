@@ -7,7 +7,6 @@
     <link rel='stylesheet' href='/css/style.css'>
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.js" type="text/javascript"></script>
-	<script src="/js/jquery-profile.js" type="text/javascript"></script>
 	<script src="/js/jquery-home.js" type="text/javascript"></script>
     <title>Notes..</title>
 </head>
@@ -33,16 +32,14 @@
 
 <div class="row row-cen">
 <div class="col-lg-4 col-cen">
-    <div class="row">
-        <h3 class="main-body-titles">Recently created notes</h3>
-    </div><br>
+        <h3 class="main-body-titles" style="text-align:center;font-size:200%;">My Notes</h3><br>
     <fieldset id="recent-notes"> 
         <div class="row">
             <div class="col-lg-12">
             <% if(rows.length) { %>    
             <% for(i=rows.length-1;i>=0;i--){ %>   
-                <p style="border-bottom:1px solid #00ccff;">
-                    <span class="note-name"><%=rows.length-i%>.&nbsp;<%=rows[i].name%></span>
+                <p style="border-bottom:1px solid #00ccff;text-align:left;margin-bottom:2em;">
+                    <span class="note-name"><%=rows.length-i%>.&nbsp;<%=rows[i].name%></span><br>
                     <a href="/profile/deletenote/<%=rows[i].id%>" class="note-delete btn btn-default">Delete</a>
                     <a href="/profile/readnote/<%=rows[i].id%>" class="note-read btn btn-default">Open</a>
                 </p><br>

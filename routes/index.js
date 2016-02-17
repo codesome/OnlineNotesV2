@@ -42,7 +42,7 @@ function mail(to,subject,content){
 }
 
 router.get('/test',function(req,res){
-mail("ganeshdv.17@gmail.com","testing","<img src='http://localhost:3000/tested' height='1px' width='1px'>");
+    res.cookie('user' , "fooo",{signed:true});
     res.send('check');
 });
 
@@ -53,7 +53,7 @@ router.get('/tested',function(req,res){
 
 router.get('/', function(req, res, next) {
     if(!obj.siStatus(req,obj,obj.cookieKey)){
-        res.render('index' , {superroremail:"",superrorusername:"",loginerror:"",signupmodal:"hide"});
+        res.render('index' , {superroremail:"",superrorusername:"",loginerror:"",signupmodal:"hide",loginmodal:"hide"});
     }
     else{
         res.redirect('/profile');
@@ -63,7 +63,7 @@ router.get('/', function(req, res, next) {
 router.post('/check/:x' , function(req,res,next){
     var x = req.params.x, s=req.body.s;
     console.log(s);
-    if(x=="Username" || x=="Email"){
+    if(x=="Email"){
         con.query(
             'select * from users where '+x+'=?',
             [s],
@@ -78,52 +78,38 @@ router.post('/check/:x' , function(req,res,next){
             }
         );
     }
-    else{
-        res.send("error caused in the server,please reload the page");
-    }
 });
 
 router.post('/signup' , function(req,res,next){
     var username = req.body.username, email = req.body.email , password = obj.hash(req.body.password);
-    
+
     con.query(
-        "select * from users where username=?",
-        [username],
-        function(err,userRow){
-            if(userRow.length){
+        "select * from users where email=?",
+        [email],
+        function(err,Row){
+            if(Row.length){
                 res.clearCookie('user');
-                res.render('index',{superrorusername: "This Username already exists" , loginerror:"",signupmodal:"show",superroremail: ""})
+                res.render('index',{superroremail: "This Email already exists" , loginerror:"",signupmodal:"show",loginmodal:"hide",superrorusername: ""})
             }
             else{
+                                
+                var date = new Date();
+    
+                var id ="u"+date.getFullYear().toString()+date.getMonth().toString()+date.getDate().toString()+date.getHours().toString()+date.getMinutes().toString()+date.getSeconds().toString();
+                var key = id + '0^!in#N0TE$~~v2' + id + 398*Number(id.slice(1));
+    
                 con.query(
-                    "select * from users where email=?",
-                    [email],
-                    function(err,Row){
-                        if(Row.length){
-                            res.clearCookie('user');
-                            res.render('index',{superroremail: "This Email already exists" , loginerror:"",signupmodal:"show",superrorusername: ""})
-                        }
-                        else{
-                            
-                            var date = new Date();
-    
-                            var id ="u"+date.getFullYear().toString()+date.getMonth().toString()+date.getDate().toString()+date.getHours().toString()+date.getMinutes().toString()+date.getSeconds().toString();
-                            var key = id + '0^!in#N0TE$~~v2' + id + 398*Number(id.slice(1));
-    
-                            con.query(
-                                "insert into users set ?" , 
-                                {id:id , username:username, email:email , password:password , userkey:key , verified:'no'} , 
-                                function(err){
-                                    if(err) throw err;
-                                    var subject = "Verify your email id for ONotes";
-                                    var content = "<a href="+"'http://"+req.hostname+":3000/verify/"+obj.encrypt(id,obj.emailKey)+"/"+obj.encrypt(username,obj.emailKey)+"/"+obj.encrypt(email,obj.emailKey)+"/"+password+"' > verify </a>";
+                    "insert into users set ?" , 
+                    {id:id , username:username, email:email , password:password , userkey:key , verified:'no'} , 
+                    function(err){
+                        if(err) throw err;
+                        var subject = "Verify your email id for ONotes";
+                        var content = "<a href="+"'http://"+req.hostname+":3000/verify/"+obj.encrypt(id,obj.emailKey)+"/"+obj.encrypt(username,obj.emailKey)+"/"+obj.encrypt(email,obj.emailKey)+"/"+password+"' > verify </a>";
                         
-                                    mail(email,subject,content);
-                                    res.send('check mail');
-                                }
-                            );
-                        }
-                    });
+                        mail(email,subject,content);
+                        res.send('check mail');
+                    }
+                );
             }
         });
 });
@@ -159,7 +145,7 @@ router.get('/verify/:id/:username/:email/:password' , function(req,res,next){
                         if(err) throw err;
                     }
                 );
-                res.cookie('user' , obj.encrypt(id , obj.cookieKey));
+                res.cookie('user' , obj.encrypt(id , obj.cookieKey),{signed:true});
                 res.render('profile' , {rows: [],urows:[],greeting:obj.greeting(userRow[0].username)});
             }
         }
@@ -169,18 +155,18 @@ router.get('/verify/:id/:username/:email/:password' , function(req,res,next){
 });
 
 router.post('/login' , function(req,res,next){
-    var username = req.body.username , password = obj.hash(req.body.password);
+    var email = req.body.email , password = obj.hash(req.body.password);
     
-    con.query('select * from users where username=?' , 
-              [username] ,
+    con.query('select * from users where email=?' , 
+              [email] ,
               function(err,rows){
                 if(rows.length && password==rows[0].password){
                     var c = obj.encrypt(rows[0].id , obj.cookieKey);
-                    res.cookie('user' , c);
+                    res.cookie('user' , c , {signed:true});
                     res.redirect('profile');
                 }
                 else{
-                    res.render('index' , {superroremail:"",superrorusername:"",loginerror:"Invalid Credentials",signupmodal:"show"});;
+                    res.render('index' , {superroremail:"",superrorusername:"",loginerror:"Invalid Credentials",signupmodal:"hide",loginmodal:"show"});;
                 }
             });
 });
@@ -201,10 +187,9 @@ router.get('/p/:str' , function(req,res,next){
                     'select * from '+rows[0].userid+' where id=?',
                     [rows[0].noteid],
                     function(err,row){
-                        if(!row.length){
-                            res.send('Sorry, The note has been deleted');
-                        }
-                        else{
+                        con.query('select username from users where id=?',
+                                  [rows[0].userid],
+                                  function(err,R){
                             con.query(
                                 'select userkey from users where id=?',
                                 [rows[0].userid],
@@ -212,9 +197,9 @@ router.get('/p/:str' , function(req,res,next){
                                     var key = user[0].userkey;
                                     var name = obj.decrypt(row[0].name,key);
                                     var content = obj.decrypt(row[0].content,key);
-                                    res.render('public',{name:name , content:content});
+                                    res.render('public',{name:name ,    content:content , author:R[0].username});
                                 });
-                        }
+                        });
                     }
                 );
             }
