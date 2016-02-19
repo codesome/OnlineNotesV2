@@ -5,10 +5,11 @@ var obj = require('./obj');
 
 
 var con = mysql.createConnection({
-    host : 'localhost',
-    user : 'root',
-    password : 'gan',
-    database : 'onlinenotesv2'
+    host     : process.env.RDS_HOSTNAME || 'localhost',
+  	user     : process.env.RDS_USERNAME || 'root',
+  	password : process.env.RDS_PASSWORD || 'gan',
+ 	port     : process.env.RDS_PORT || '3306',
+    database : 'ebdb'
 });
 con.connect(function(err){
     if(err){console.log("Database Error");}
@@ -162,7 +163,7 @@ router.get('/readnote/:id' , function(req,res,next){
                                             var publiclink , pv;
                                             if(prow.length){
                                                 pv = 1;
-                                                publiclink = "http://"+req.hostname+":3000/p/"+prow[0].str;
+                                                publiclink = "http://"+req.hostname+"/p/"+prow[0].str;
                                             }
                                             else{
                                                 pv = 0;
@@ -297,27 +298,27 @@ router.post('/p/:id' , function(req,res,next){
     var noteid = req.params.id ;
     var userid = obj.siStatus(req,obj,obj.cookieKey);
     
-    con.query(
+    /*con.query(
         'select * from public where userid=? and noteid=?',
         [userid,noteid],
         function(err,rows){
             if(rows.length){
                 console.log('one');
-                res.send("http://"+req.hostname+":3000/p/"+rows[0].str);
+                res.send("http://"+req.hostname+"/p/"+rows[0].str);
             }
-            else{
+            else{*/
                 var str = obj.randomString(7);
                 con.query(
                     'insert into public set ?',
                     {str:str , userid:userid , noteid:noteid},
                     function(err,row){
                         console.log(str);
-                        res.send("http://"+req.hostname+":3000/p/"+str);
+                        res.send("http://"+req.hostname+"/p/"+str);
                     }
                 );
-            }
+            /*}
         }
-    );
+    );*/
 });
 
 router.post('/d/:id' , function(req,res,next){

@@ -10,7 +10,14 @@ $(document).ready(function(){
        $(".navbar").css({"border-bottom":"0"/*, "transition":"border-bottom 0.15s","-webkit-transition-timing-function": "ease-in-out" , "transition-timing-function": "ease-in-out"*/});
     });
     
+    //signup,login click
+    
+    $("#signup,#login").click(function(){
+        $("#username,#email,#password,#lemail,#lpassword").val("");
+        $(".error").html("");
+    });
 
+    
     //public link
     $("#generate-p-link").click(function(){
         $(this).slideUp();
@@ -48,10 +55,11 @@ $(document).ready(function(){
         $(".edit-mode").css('display','block');
     });
 
-    //username
+    //username,email,password
     $("#username").keyup(function(){
-        if(!$(this).val()){
+        if(!$(this).val() || /^\s*$/.test($(this).val())){
             $("#usernameerror").html("This can't be empty");
+            console.log($(this).val().length);
         }
         else{
             if (!(/^[a-zA-Z() ]+$/.test($(this).val()))){
@@ -61,7 +69,26 @@ $(document).ready(function(){
                 $("#usernameerror").html("");    
             }
         }
-        
+    });
+    
+    $("#email").keyup(function(){
+        if(!$(this).val() || /^\s*$/.test($(this).val())){
+            $("#emailerror").html("This can't be empty");
+            console.log($(this).val().length);
+        }
+        else{
+            $("#emailerror").html("");
+        }
+    });
+    
+    $("#password").keyup(function(){
+        if(!$(this).val() || /^\s*$/.test($(this).val())){
+            $("#passworderror").html("This can't be empty");
+            console.log($(this).val().length);
+        }
+        else{
+            $("#passworderror").html("");
+        }
     });
     
 });

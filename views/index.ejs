@@ -56,8 +56,10 @@
                     <p class="error" id="emailerror"></p>
                     <fieldset>
                         <label class="su-label">Password:</label><br>
-                        <input name="password" class="form-control" type="password" placeholder="Select your password for this site" required>
+                        <input id="password" name="password" class="form-control" type="password" placeholder="Select your password for this site" required>
                     </fieldset> 
+                    <p class="error"><%=signupfield%></p>
+                    <p class="error" id="passworderror"></p>
                     <button class="btn btn-info form-btn" type="submit" value="submit" form="sign-up">Signup</button><br>
                     <a href="#" data-dismiss="modal" data-toggle="modal" data-target="#login-form">Already a member? Login.</a>
                 </form>
@@ -112,10 +114,10 @@ $(document).ready(function(){
                 <form id="log-in" action="/login" method="post">
                     <fieldset>
                         <label class="su-label"><span class="glyphicon glyphicon-user"></span>&nbsp;Email:</label><br>
-                        <input name="email" class="form-control" type="text" placeholder="Your registered email id" required>
+                        <input id="lemail" name="email" class="form-control" type="text" placeholder="Your registered email id" required>
                     </fieldset><br>
                     <fieldset>
-                        <label class="su-label">Password:</label><br>
+                        <label id="lpassword" class="su-label">Password:</label><br>
                         <input name="password" class="form-control" type="password" placeholder="Your password for this site" required>
                     </fieldset>   
                     <p class="error"><%=loginerror%></p>  

@@ -10,7 +10,7 @@ var profile = require('./routes/profile');
 var query = require('./routes/query');
 
 var app = express();
-
+var http = require('http');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -58,4 +58,6 @@ app.use(function(err, req, res, next) {
 });
 
 
-module.exports = app;
+http.createServer(app).listen(process.env.PORT || 3000 , function(){
+    console.log(process.env.PORT || 3000);
+});

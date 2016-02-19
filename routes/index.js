@@ -1,15 +1,15 @@
 var express = require('express');
 var mysql = require('mysql');
-var app = express();
 var router = express.Router();
 var obj = require('./obj');
 var mailer = require("nodemailer");
 
 var con = mysql.createConnection({
-    host : 'localhost',
-    user : 'root',
-    password : 'gan',
-    database : 'onlinenotesv2'
+    host     : process.env.RDS_HOSTNAME || 'localhost',
+  	user     : process.env.RDS_USERNAME || 'root',
+  	password : process.env.RDS_PASSWORD || 'gan',
+ 	port     : process.env.RDS_PORT || '3306',
+    database : "ebdb"
 });
 con.connect(function(err){
     if(err){console.log("Database Error");}
@@ -41,19 +41,23 @@ function mail(to,subject,content){
     });
 }
 
-router.get('/test',function(req,res){
-    res.cookie('user' , "fooo",{signed:true});
-    res.send('check');
+router.get('/create/tables/secure',function(req,res){
+   /* con.query("create table if not exists users (id varchar(15) , username varchar(255) , password text, userkey varchar(100) , email varchar(255) , verified varchar(3) , primary key (id))", function(err, rows, fields){
+        if (err) res.send(err);
+    });*/
+    con.query("create table if not exists public (id int(5) auto_increment,str varchar(10), userid varchar(30), noteid varchar(20) , primary key (id))", function(err, rows, fields){
+        if (err) res.send(err);
+        res.send('Tables Created')
+    });
 });
 
-router.get('/tested',function(req,res){
-    console.log('mail viewed');
-    res.send('done');
+router.get('/delete/secure/public' , function(req,res){
+    con.query('drop table public',function(err){if(err) throw err;})
 });
 
 router.get('/', function(req, res, next) {
     if(!obj.siStatus(req,obj,obj.cookieKey)){
-        res.render('index' , {superroremail:"",superrorusername:"",loginerror:"",signupmodal:"hide",loginmodal:"hide"});
+        res.render('index' , {superroremail:"",superrorusername:"",loginerror:"",signupmodal:"hide",loginmodal:"hide",signupfield:""});
     }
     else{
         res.redirect('/profile');
@@ -81,15 +85,23 @@ router.post('/check/:x' , function(req,res,next){
 });
 
 router.post('/signup' , function(req,res,next){
-    var username = req.body.username, email = req.body.email , password = obj.hash(req.body.password);
+    var username = req.body.username, email = req.body.email , password = req.body.password;
 
-    con.query(
+    if((!username || /^\s*$/.test(username)) || (!email || /^\s*$/.test(email)) || (!password || /^\s*$/.test(password))){
+        res.render('index',{superroremail: "" , loginerror:"",signupmodal:"show",loginmodal:"hide",signupfield:"All fields are mandatory!"});
+    }
+    else if(!(/^[a-zA-Z() ]+$/.test(username))){
+        res.render('index',{superroremail: "" , loginerror:"",signupmodal:"show",loginmodal:"hide",signupfield:"Invalid Name"});
+    }
+    else{
+        password = obj.hash(password);
+        con.query(
         "select * from users where email=?",
         [email],
         function(err,Row){
             if(Row.length){
                 res.clearCookie('user');
-                res.render('index',{superroremail: "This Email already exists" , loginerror:"",signupmodal:"show",loginmodal:"hide"})
+                res.render('index',{superroremail: "This Email already exists" , loginerror:"",signupmodal:"show",loginmodal:"hide",signupfield:""})
             }
             else{
                                 
@@ -104,7 +116,7 @@ router.post('/signup' , function(req,res,next){
                     function(err){
                         if(err) throw err;
                         var subject = "Verify your email id for ONotes";
-                        var content = "<a href="+"'http://"+req.hostname+":3000/verify/"+obj.encrypt(id,obj.emailKey)+"/"+obj.encrypt(username,obj.emailKey)+"/"+obj.encrypt(email,obj.emailKey)+"/"+password+"' > verify </a>";
+                        var content = "<a href="+"'http://"+req.hostname+"/verify/"+obj.encrypt(id,obj.emailKey)+"/"+obj.encrypt(username,obj.emailKey)+"/"+obj.encrypt(email,obj.emailKey)+"/"+password+"' > verify </a>";
                         
                         mail(email,subject,content);
                         res.send('check mail');
@@ -112,6 +124,7 @@ router.post('/signup' , function(req,res,next){
                 );
             }
         });
+    }
 });
 
 
@@ -166,7 +179,7 @@ router.post('/login' , function(req,res,next){
                     res.redirect('profile');
                 }
                 else{
-                    res.render('index' , {superroremail:"",loginerror:"Invalid Credentials",signupmodal:"hide",loginmodal:"show"});;
+                    res.render('index' , {superroremail:"",loginerror:"Invalid Credentials",signupmodal:"hide",loginmodal:"show",signupfield:""});;
                 }
             });
 });
