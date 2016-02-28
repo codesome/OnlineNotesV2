@@ -85,8 +85,8 @@ router.post('/createnote' , function(req,res,next){
         var t = Date.now();
         console.log(t);
         con.query(
-            "insert into "+userid+" set id=?,name=?,content=?,updates=0" , 
-            [t,name,content], 
+            "insert into "+userid+" set id=?,name=?,content=?,updates=0,public=0,str=?" , 
+            [t,name,content,obj.randomString(6)], 
             function(err){if(err) throw err;}
         );
         
@@ -157,30 +157,26 @@ router.get('/readnote/:id' , function(req,res,next){
                                     cRow[i].comment = obj.decrypt(cRow[i].comment,key) 
                                 }
                                 
-                                con.query('select * from public where noteid=?',
-                                         [noteid],
-                                         function(err,prow){
-                                            var publiclink , pv;
-                                            if(prow.length){
-                                                pv = 1;
-                                                publiclink = "http://"+req.hostname+"/p/"+prow[0].str;
-                                            }
-                                            else{
-                                                pv = 0;
-                                                publiclink = "";
-                                            }
-                                    
-                                            res.render('read',{
-                                                name : obj.decrypt(rows[0].name,key),
-                                                content : obj.decrypt(rows[0].content,key),
-                                                id : noteid,
-                                                cRow : cRow,
-                                                greeting: obj.greeting(row[0].username),
-                                                pv:pv,
-                                                publiclink:publiclink
-                                            });
-                                    
-                                        });
+                                var publiclink , pv;
+                                if(rows[0].public){
+                                    pv = 1;
+                                    publiclink =    "http://"+req.hostname+"/p/"+userid+"/"+rows[0].str;
+                                }
+                                else{
+                                    pv = 0;
+                                    publiclink = "";
+                                }
+                                        
+                                res.render('read',{
+                                    name : obj.decrypt(rows[0].name,key),
+                                    content : obj.decrypt(rows[0].content,key),
+                                    id : noteid,
+                                    cRow : cRow,
+                                    greeting: obj.greeting(row[0].username),
+                                    pv:pv,
+                                    publiclink:publiclink,
+                                    str: rows[0].str
+                                });
                             });
                 });
         });
@@ -199,12 +195,12 @@ router.get('/deletenote/:id' , function(req,res,next){
                 var userid = obj.siStatus(req,obj,obj.cookieKey);
                 var noteid = req.params.id;
         
-                con.query(
+                /*con.query(
                     'delete from public where userid=?', 
                     [userid] , 
                     function(err){
                         if(err) throw err;
-                    });
+                    });*/
                 
                 con.query(
                     'delete from '+userid+' where id=?', 
@@ -294,9 +290,15 @@ router.post('/comment/d/:noteid/:commid' , function(req,res,next){
     });
 });
 
-router.post('/p/:id' , function(req,res,next){
-    var noteid = req.params.id ;
+router.post('/p/:id/:str' , function(req,res,next){
+    var noteid = req.params.id , str = req.params.str ;
     var userid = obj.siStatus(req,obj,obj.cookieKey);
+    
+    con.query('update '+userid+' set public=? where id=?',
+                [1,noteid],
+              function(err,row){
+                    res.send("http://"+req.hostname+"/p/"+userid+"/"+str);
+            });
     
     /*con.query(
         'select * from public where userid=? and noteid=?',
@@ -307,7 +309,7 @@ router.post('/p/:id' , function(req,res,next){
                 res.send("http://"+req.hostname+"/p/"+rows[0].str);
             }
             else{*/
-                var str = obj.randomString(7);
+                /*var str = obj.randomString(7);
                 con.query(
                     'insert into public set ?',
                     {str:str , userid:userid , noteid:noteid},
@@ -315,7 +317,7 @@ router.post('/p/:id' , function(req,res,next){
                         console.log(str);
                         res.send("http://"+req.hostname+"/p/"+str);
                     }
-                );
+                );*/
             /*}
         }
     );*/
@@ -326,8 +328,8 @@ router.post('/d/:id' , function(req,res,next){
     var userid = obj.siStatus(req,obj,obj.cookieKey);
     
     con.query(
-        'delete from public where userid=? and noteid=?',
-        [userid,noteid],
+        'update '+userid+' set public=0 where id=?',
+                [noteid],
         function(err){
             if(err) throw err;
             res.send("");

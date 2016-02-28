@@ -41,6 +41,7 @@ function mail(to,subject,content){
     });
 }
 
+
 router.get('/create/tables/secure',function(req,res){
    /* con.query("create table if not exists users (id varchar(15) , username varchar(255) , password text, userkey varchar(100) , email varchar(255) , verified varchar(3) , primary key (id))", function(err, rows, fields){
         if (err) res.send(err);
@@ -153,7 +154,7 @@ router.get('/verify/:id/:username/:email/:password' , function(req,res,next){
                 con.query('update users set verified="yes" where username=?',[username],function(err){if(err)throw err;});
                 
                 con.query(
-                    "create table "+id+" ( id varchar(20) , name text , content text, updates int, primary key (id) )" ,
+                    "create table "+id+" ( id varchar(20) , name text , content text, updates int, str varchar(10) , public int(1) , primary key (id) )" ,
                     function(err){
                         if(err) throw err;
                     }
@@ -185,10 +186,30 @@ router.post('/login' , function(req,res,next){
 });
 
 
-router.get('/p/:str' , function(req,res,next){
+router.get('/p/:userid/:str' , function(req,res,next){
     var str = req.params.str;
+    var userid = req.params.userid;
     
-    con.query(
+    con.query('select * from '+userid+' where str=?',[str],
+             function(err,rows){
+                    if(!rows.length){
+                        res.send("Invalid Link");
+                    }
+                    else if(rows[0].public == 0){
+                        res.send("This note is private");
+                    }
+                    else{
+                        con.query('select * from users where id=?',[userid],
+                                 function(err,row){
+                                    var key = row[0].userkey;
+                                    var name = obj.decrypt(rows[0].name,key);
+                                    var content = obj.decrypt(rows[0].content,key);
+                                    res.render('public',{name:name ,    content:content , author:row[0].username});
+                            });
+                    }
+        });
+    
+    /*con.query(
         'select * from public where str=?',
         [str],
         function(err,rows){
@@ -217,7 +238,7 @@ router.get('/p/:str' , function(req,res,next){
                 );
             }
         }
-    );
+    );*/
 });
 
 
