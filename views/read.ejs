@@ -48,31 +48,7 @@
             <% if(pv){ %>
                 <script>
                 $(document).ready(function(){
-                    
-                    function clip(text) {
-                        var copyElement = document.createElement('input');
-                        copyElement.setAttribute('type', 'text');
-                        copyElement.setAttribute('value', text);
-                        copyElement = document.body.appendChild(copyElement);
-                        copyElement.select();
-                        try {
-                            if(!document.execCommand('copy')) throw 'Not allowed.';
-                        } catch(e) {
-                            copyElement.remove();
-                            console.log("document.execCommand('copy'); is not supported");
-                            prompt('Copy the text below. (ctrl c, enter)', text);
-                        } finally {
-                            if (typeof e == 'undefined') {
-                                copyElement.remove();
-                            }
-                        }
-                    }
-                    
                     $("#public-link").val("<%=publiclink%>");
-                    
-                    $("#copy").click(function(){
-                        clip($("#public-link").val());
-                    });                      
                 });
                 </script>
             <% } %>
@@ -84,7 +60,8 @@
                         $.post('/profile/p/'+nid+'/'+str,function(data){
                             $("#public-link").val(data);
                         });
-                        
+                        $("#status").html("public");
+                    });
                         function clip(text) {
                             var copyElement = document.createElement('input');
                             copyElement.setAttribute('type', 'text');
@@ -108,18 +85,52 @@
                             clip($("#public-link").val());
                         }); 
                         
-                    });
                     $("#delete-p-link").click(function(){
                         $.post('/profile/d/'+nid,function(data){
                             $("#public-link").val(data);
                         });
+                        $("#status").html("private");
                     });    
                 });    
             </script>
         </div>
     </nav>
 <!-- a note -->   
-    <a href="/profile/deletenote/<%=id%>" style="display:none">delete</a>
+    <span id="status"></span>
+    
+    <script>
+    $(document).ready(function(){
+        if(<%=pv%>){
+            $("#status").html("public");
+        }
+        else{
+            $("#status").html("private");
+        }
+    });
+    </script>
+    
+    <a href="#" data-toggle="modal" data-target="#<%=id%>">delete</a>
+    <!-- Delete modal -->
+    <div class="modal fade" id="<%=id%>" role="dialog">
+                    <div class="modal-dialog">
+    
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Warning</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>Do you really want to delete "<%=name%>" ?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="/profile/deletenote/<%=id%>" type="button" class="btn btn-default">Delete</a>
+                            </div>
+                        </div>
+      
+                    </div>
+                </div>
+    
 <fieldset id="aNote">
     <div class="row">
         <div class="col-lg-2">
@@ -133,6 +144,20 @@
                     <button class="btn" id="edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>
                 </li>
             </ul>
+            
+            <script>
+                $(".glyphicon-align-left").click(function(){
+                    $.post('/profile/align/<%=id%>' ,{a:"left"},function(data){} );     
+                });
+    
+                $(".glyphicon-align-center").click(function(){
+                    $.post('/profile/align/<%=id%>' ,{a:"center"},function(data){} );    
+                });
+    
+                $(".glyphicon-align-right").click(function(){
+                    $.post('/profile/align/<%=id%>' ,{a:"right"},function(data){} );    
+                });
+            </script>
             
             <span class="edit-mode" style="float:right">
                 <button type="submit" value="submit" form="edit-note" id="final-edit" class="btn" style="background:#00cc00;color:white"><span class="glyphicon glyphicon-ok"></span></button><br><br>
@@ -151,8 +176,8 @@
             <div class="panel panel-default" style="border-color:#00ccff;">
                 <!--read-->
                 <span class="read-mode">
-                    <div class="panel-heading read-note-name"><%=name%></div>
-                    <div id="note-content" class="panel-body read-note-content"></div>
+                    <div class="panel-heading read-note-name" style="text-align:<%=align%>"><%=name%></div>
+                    <div id="note-content" class="panel-body read-note-content" style="text-align:<%=align%>"></div>
                 </span>
                 <!--read-->
                 

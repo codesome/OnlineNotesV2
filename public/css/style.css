@@ -189,9 +189,6 @@ textarea{
     padding: 0.5em;
 }
 
-.read-note-name,.read-note-content{
-    text-align: center;
-}
 
 .read-note-name{
     font-weight: bold !important;

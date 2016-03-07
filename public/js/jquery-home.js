@@ -91,4 +91,7 @@ $(document).ready(function(){
         }
     });
     
+    $("#open-comment").click(function(){
+        $(".comment").slideDown();
+    });
 });

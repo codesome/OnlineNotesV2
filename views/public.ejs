@@ -18,16 +18,9 @@
 <div class="row row-cen">
     <!-- Note -->
     <div class="col-lg-6 col-cen"> 
-        <ul class="nav">
-                <li>
-                    <button class="btn btn-default" style="border-top-right-radius:0;border-bottom-right-radius:0;"><span class="glyphicon glyphicon-align-left"></span></button>
-                    <button class="btn btn-default" style=";border-radius:0"><span class="glyphicon glyphicon-align-center"></span></button>
-                    <button class="btn btn-default" style="border-top-left-radius:0;border-bottom-left-radius:0"><span class="glyphicon glyphicon-align-right"></span></button>
-                </li>
-            </ul>
-        <div class="panel panel-default" style="border-color:#00ccff;">
-            <div class="panel-heading read-note-name"><%=name%></div>
-            <div id="note-content" class="panel-body read-note-content"></div>
+        <div class="panel panel-default" style="border-color:#00ccff;margin-top:2em;">
+            <div class="panel-heading read-note-name" style="text-align:<%=align%>"><%=name%></div>
+            <div id="note-content" class="panel-body read-note-content" style="text-align:<%=align%>"></div>
             <div class="panel-footer author">Author: <b><%=author%></b></div>
         </div>
     </div>
@@ -40,8 +33,75 @@
         });
     </script>
     <!-- Note -->
-</div>       
-
+</div>     
+    
+    <a href="#" id="open-comment" >Comment</a>
+<% if(!logged){%>    
+<script>
+$(document).ready(function(){
+    $("#open-comment").click(function(){
+        $.post('/p/check/iflogged' , function(data){
+            if(data){
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+<% } %>    
+    <!-- Comments -->
+    <div>
+    <% if(logged){%>
+            <div style="display:none;" class="input-group comment">
+                <input id="comment" type="text" class="form-control" placeholder="Comment here" required>
+                <span class="input-group-btn">
+                    <button id="post-comment" class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button>
+                </span>
+            </div>
+    <% }else{ %>
+    <div class="comment" style="display:none;">Please login</div>
+    <% } %>
+            <span id="comment-space">
+            <% for(i=cRow.length-1;i>=0;i--){ %>
+            <div class="panel panel-default a-comment">
+                <div class="panel-body">
+                    <%=cRow[i].username%>:<%=cRow[i].comment%>
+                </div>
+            </div>
+            <% } %>
+            </span>
+    </div>
+        <!-- Comments -->
+<script>
+$(document).ready(function(){
+    
+    function sendcomment(){
+        var str = "<%=str%>" ;
+        var c = $("#comment").val() ;
+        if(c!=""){
+            $.post("/p/comment/"+str , {comment:c} ,function(data){
+                
+                if(data == "19246918"){
+                    location.reload();
+                }
+                else{
+                    $("#comment-space").prepend("<div class='panel panel-default a-comment'><div class='panel-body'>"+data.username+": "+data.comment+"</div></div>");
+                    $("#comment").val("");
+                }
+                
+            });
+        }
+    }
+    
+    $("#comment").keypress(function(event){
+        if( event.which == 13 ) sendcomment();
+    });
+    
+    $("#post-comment").click(function(){ 
+        sendcomment();
+    });
+});    
+</script> 
       
 </body>
 </html>

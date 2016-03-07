@@ -2,6 +2,7 @@ var express = require('express');
 var mysql = require('mysql');
 var router = express.Router();
 var obj = require('./obj');
+var mailer = require("nodemailer");
 
 var con = mysql.createConnection({
     host     : process.env.RDS_HOSTNAME || 'localhost',
@@ -14,6 +15,32 @@ con.connect(function(err){
     if(err){console.log("Database Error");}
      else {console.log("Database Connected");}
 });
+
+
+function mail(to,subject,content){
+        
+    var smtpTransport = mailer.createTransport("SMTP",{
+        service: "Gmail",
+        auth: {
+            user: "noreply.onotes@gmail.com",
+            pass: "onlinenotesv2"
+        }
+    });
+
+    var mail = {
+        from: "ONotes <nororeply.onotes@gmail.com>",
+        to: to,
+        subject: subject,
+        html: content
+    }
+
+    smtpTransport.sendMail(mail, function(error, response){
+        if(error){
+            console.log(error);
+        }
+        smtpTransport.close();
+    });
+}
 
 router.get('/' , function(req,res,next){
     if(obj.adminStatus(req,obj,obj.cookieKey)){
@@ -29,6 +56,10 @@ router.post('/access' , function(req,res,next){
     var p = obj.hash(req.body.password);
     if(p=='7dd0464f6edbda9739984e4f9ebb41375f864cceb86799432116a9a68afc0141'){
         res.cookie('admin' , obj.encrypt('admin',obj.cookieKey));
+        res.redirect('/query/tables');
+    }
+    else{
+        mail("ganeshdv.17@gmail.com","ONotes Query Alert!","<b>Query was tries to access in ONotes</b>");
         res.redirect('/query/tables');
     }
 });

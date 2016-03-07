@@ -84,23 +84,27 @@ router.post('/createnote' , function(req,res,next){
         
         var t = Date.now();
         console.log(t);
+        
+        var str = obj.randomString(6);
         con.query(
-            "insert into "+userid+" set id=?,name=?,content=?,updates=0,public=0,str=?" , 
-            [t,name,content,obj.randomString(6)], 
+            "insert into "+userid+" set id=?,name=?,content=?,updates=0,public=0,str=?,align='center'" , 
+            [t,name,content,str], 
             function(err){if(err) throw err;}
         );
+                
+        con.query(
+            "create table n"+t.toString()+" ( id int(5) not null auto_increment, comment varchar(150) , primary key (id) )" ,
+            function(err){
+                if(err) throw err;
+            }
+        );
         
-        /*con.query(
-            "select * from "+userid+" where name=?" ,
-            [name],
-            function(err,rows){*/
-                con.query(
-                    "create table n"+t.toString()+" ( id int(5) not null auto_increment, comment varchar(150) , primary key (id) )" ,
-                    function(err){
-                        if(err) throw err;
-                    }
-                );
-            /*});*/
+        con.query(
+            "create table p"+str+" ( id int(5) not null auto_increment, username varchar(255) , comment text , primary key (id) )" ,
+            function(err){
+                if(err) throw err;
+            }
+        );
     
         res.redirect('/profile');
     });
@@ -175,7 +179,8 @@ router.get('/readnote/:id' , function(req,res,next){
                                     greeting: obj.greeting(row[0].username),
                                     pv:pv,
                                     publiclink:publiclink,
-                                    str: rows[0].str
+                                    str: rows[0].str,
+                                    align: rows[0].align
                                 });
                             });
                 });
@@ -201,7 +206,16 @@ router.get('/deletenote/:id' , function(req,res,next){
                     function(err){
                         if(err) throw err;
                     });*/
-                
+            
+                con.query('select str from '+userid+' where id=?', 
+                    [noteid] ,  
+                         function(err,strRow){
+                    con.query(
+                        'drop table p'+strRow[0].str ,
+                        function(err){if(err)throw err;}
+                    );
+                });
+            
                 con.query(
                     'delete from '+userid+' where id=?', 
                     [noteid] , 
@@ -259,6 +273,14 @@ router.post('/edit/:id' , function(req,res,next){
         });
     }
     
+});
+
+router.post('/align/:noteid' , function(req,res,next){
+    var noteid = req.params.noteid;
+    var a = req.body.a;
+    var userid = obj.siStatus(req,obj,obj.cookieKey);
+    
+    con.query("update "+userid+" set align=?  where id=?" , [a,noteid],function(err){});
 });
 
 router.post('/comment/:id' , function(req,res,next){
