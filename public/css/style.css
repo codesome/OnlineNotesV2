@@ -201,6 +201,9 @@ textarea{
     font-size: 120%;
     padding: 2em;
     min-height: 20em;
+    background:transparent;
+    padding:0 1.5em;
+    border:0;
 }
 
 .edit-note-content{

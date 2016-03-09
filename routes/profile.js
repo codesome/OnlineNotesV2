@@ -87,7 +87,7 @@ router.post('/createnote' , function(req,res,next){
         
         var str = obj.randomString(6);
         con.query(
-            "insert into "+userid+" set id=?,name=?,content=?,updates=0,public=0,str=?,align='center'" , 
+            "insert into "+userid+" set id=?,name=?,content=?,updates=0,public=0,str=?,align='left'" , 
             [t,name,content,str], 
             function(err){if(err) throw err;}
         );

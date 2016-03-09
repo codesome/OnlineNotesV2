@@ -20,18 +20,10 @@
     <div class="col-lg-6 col-cen"> 
         <div class="panel panel-default" style="border-color:#00ccff;margin-top:2em;">
             <div class="panel-heading read-note-name" style="text-align:<%=align%>"><%=name%></div>
-            <div id="note-content" class="panel-body read-note-content" style="text-align:<%=align%>"></div>
+            <pre id="note-content" class="panel-body read-note-content" style="text-align:<%=align%>"><%=content%></pre>
             <div class="panel-footer author">Author: <b><%=author%></b></div>
         </div>
     </div>
-    <script id="scr" type="text/template"><%=content%></script>
-    <script>
-        $(document).ready(function(){
-            var content = $("#scr").html();
-            content  = content.replace(/\n/g,'<br>');
-            $("#note-content").html(content);
-        });
-    </script>
     <!-- Note -->
 </div>     
     

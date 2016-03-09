@@ -37,42 +37,67 @@
         <div class="row">
             <div class="col-lg-12">
                 
-                <ul class="nav nav-pills">
+                <!-- SEARCH -->
+                    
+                <div class="input-group">
+                    <input id="search-note" class="form-control" placeholder="search in all your notes">
+                    <span class="input-group-btn">
+                        <button id="search-btn" class="btn btn-default" type="button"><span class="glyphicon glyphicon-pencil search-btn"></span></button>
+                    </span>
+                </div>
+                
+                <script>
+                $(document).ready(function(){
+                    $("#search-note").on("focus keyup",function(){
+                        var q = $(this).val();
+                        
+                        $('.search-btn').removeClass("glyphicon-pencil").addClass("glyphicon-remove");
+                        $('.list').css('display','none');
+                        $('#search-result').css('display','block').html("");
+                        
+                        var p = 0;
+                        <% for(i=0;i<rows.length;i++){ %>
+                            if("<%=rows[i].name%>".search(q) != -1){
+                                $("#search-result").prepend('<p style="border-bottom:1px solid #00ccff;text-align:left;margin-bottom:2em;"><span class="note-name">&nbsp;'+'<%=rows[i].name%>'+'</span><br><a href="#" class="note-delete btn btn-default" data-toggle="modal" data-target="#'+'<%=rows[i].id%>'+'">Delete</a><a href="/profile/readnote/'+'<%=rows[i].id%>'+'" class="note-read btn btn-default">Open</a></p>');
+                                
+                                p++;                           
+                            }
+                        <% } %>
+                     });
+                        
+                    $("#search-btn").click(function(){
+                        $('#search-note').val("")
+                        $('.search-btn').removeClass("glyphicon-remove").addClass("glyphicon-pencil");
+                        $('.list').css('display','block');
+                        $('#search-result').css('display','none').html("");
+                    });    
+                            
+                });
+                </script>
+                
+                <div id="search-result"></div>
+                
+                
+                
+                <!--  SEARCH -->
+                
+                
+                <ul class="nav nav-pills list">
                     <li class="active"><a data-toggle="tab" href="#home">All</a></li>
                     <li><a data-toggle="tab" href="#private">Private</a></li>
                     <li><a data-toggle="tab" href="#public">Public</a></li>
                 </ul>
                 
-                <div class="tab-content">
+                <div class="tab-content list">
                     <!--ALL-->
                     <div id="home" class="tab-pane fade in active">
                         <% if(rows.length) { %>    
                         <% for(i=rows.length-1;i>=0;i--){ %>   
-                
-                
                         <p style="border-bottom:1px solid #00ccff;text-align:left;margin-bottom:2em;">
                             <span class="note-name"><%=rows.length-i%>.&nbsp;<%=rows[i].name%></span><br>
                             <a href="#" class="note-delete btn btn-default" data-toggle="modal" data-target="#<%=rows[i].id%>">Delete</a>
                             <a href="/profile/readnote/<%=rows[i].id%>" class="note-read btn btn-default">Open</a>
                         </p><br>
-                
-                        <div class="modal fade" id="<%=rows[i].id%>" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Warning</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Do you really want to delete "<%=rows[i].name%>" ?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <a href="/profile/deletenote/<%=rows[i].id%>" type="button" class="btn btn-default">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-  
                         <% } %>    
                         <% } else { %> 
                         <span style="font-size:140%">
@@ -85,36 +110,15 @@
                     
                     <!--PRIVATE-->
                     <div id="private" class="tab-pane fade">
-                        
                         <% if(rows.length) { x = 1;%>    
                         <% for(i=rows.length-1;i>=0;i--){ %>   
-                
                         <% if(!rows[i].public){ %>
                         <p style="border-bottom:1px solid #00ccff;text-align:left;margin-bottom:2em;">
                             <span class="note-name"><%=x%><% x++; %>.&nbsp;<%=rows[i].name%></span><br>
-                            <a href="#" class="note-delete btn btn-default" data-toggle="modal" data-target="#<%="pr"%><%=rows[i].id%>">Delete</a>
+                            <a href="#" class="note-delete btn btn-default" data-toggle="modal" data-target="#<%=rows[i].id%>">Delete</a>
                             <a href="/profile/readnote/<%=rows[i].id%>" class="note-read btn btn-default">Open</a>
                         </p><br>
-                
-                        <div class="modal fade" id="<%="pr"%><%=rows[i].id%>" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Warning</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Do you really want to delete "<%=rows[i].name%>" ?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <a href="/profile/deletenote/<%=rows[i].id%>" type="button" class="btn btn-default">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-  
                         <% } %>
-                
                         <% } %>    
                         <% } else { %> 
                         <span style="font-size:140%">
@@ -128,44 +132,21 @@
                     
                     <!--PUBLIC-->
                     <div id="public" class="tab-pane fade">
-                        
                         <% if(rows.length) { x = 1;%>    
                         <% for(i=rows.length-1;i>=0;i--){ %>   
-                
                         <% if(rows[i].public){ %>
                         <p style="border-bottom:1px solid #00ccff;text-align:left;margin-bottom:2em;">
                             <span class="note-name"><%=x%><% x++; %>.&nbsp;<%=rows[i].name%></span><br>
-                            <a href="#" class="note-delete btn btn-default" data-toggle="modal" data-target="#<%="pu"%><%=rows[i].id%>">Delete</a>
+                            <a href="#" class="note-delete btn btn-default" data-toggle="modal" data-target="#<%=rows[i].id%>">Delete</a>
                             <a href="/profile/readnote/<%=rows[i].id%>" class="note-read btn btn-default">Open</a>
                         </p><br>
-                
-                
-                        <div class="modal fade" id="<%="pu"%><%=rows[i].id%>" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Warning</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Do you really want to delete "<%=rows[i].name%>" ?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <a href="/profile/deletenote/<%=rows[i].id%>" type="button" class="btn btn-default">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-  
                         <% } %>
-                
                         <% } %>    
                         <% } else { %> 
                         <span style="font-size:140%">
                             No notes yet.....
                         </span>&emsp;&emsp;<a href="/profile/createpage" class="create-one">Create one</a>
                         <% } %> 
-                        
                     </div>
                 </div>
                 
@@ -174,6 +155,30 @@
             </div>
         </div>  
     </fieldset>
+    
+    
+    
+    <% if(rows.length) { %>    
+    <% for(i=rows.length-1;i>=0;i--){ %>   
+    <div class="modal fade" id="<%=rows[i].id%>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Warning</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete "<%=rows[i].name%>" ?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="/profile/deletenote/<%=rows[i].id%>" type="button" class="btn btn- default">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+    <% } %>
+    
 </div>  
 </div>
     
