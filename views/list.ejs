@@ -30,50 +30,100 @@
         </div>
     </nav>
 
-<div class="row row-cen">
-<div class="col-lg-4 col-cen">
-        <h3 class="main-body-titles" style="text-align:center;font-size:200%;">My Notes</h3><br>
+<div class="row">
+  <div class="col-lg-4" style="text-align:center">
+  
+    <button id="search-trigger-btn" class="btn"><a id="search-trigger" href="#" style="color:grey;font-size:120%">Search for a note</a></button>
+    <div class="input-group" id="search-note-group" style="display:none">
+      <input id="search-note" class="form-control" placeholder="search in all your notes">
+      <span class="input-group-btn">
+        <button id="search-btn" class="btn btn-default" type="button"><span     class="glyphicon glyphicon-pencil search-btn"></span></button>
+      </span>
+    </div>
+  
+  </div>
+<div class="col-lg-4">
     <fieldset id="recent-notes"> 
         <div class="row">
             <div class="col-lg-12">
                 
                 <!-- SEARCH -->
-                    
-                <div class="input-group">
-                    <input id="search-note" class="form-control" placeholder="search in all your notes">
-                    <span class="input-group-btn">
-                        <button id="search-btn" class="btn btn-default" type="button"><span class="glyphicon glyphicon-pencil search-btn"></span></button>
-                    </span>
-                </div>
+              
                 
-                <script>
+              <script>
                 $(document).ready(function(){
-                    $("#search-note").on("focus keyup",function(){
-                        var q = $(this).val();
+                  var rows;
+                  $.get('/test' , function(data){
+                    rows = data;
+                  });
+                  
+                  $("#search-trigger").click(function(){
+                    $("#search-trigger-btn").hide();
+                    $("#search-note-group").show();
+                  });
+                    
+                  $("#search-note").on("keyup",function(){
+                    var q = $(this).val();
                         
-                        $('.search-btn').removeClass("glyphicon-pencil").addClass("glyphicon-remove");
-                        $('.list').css('display','none');
-                        $('#search-result').css('display','block').html("");
+                    if(q[q.length-1]==" ") { q = q.slice(0,q.length-1); }
+                    q = q.split(" ");
                         
-                        var p = 0;
-                        <% for(i=0;i<rows.length;i++){ %>
-                            if("<%=rows[i].name%>".search(q) != -1){
-                                $("#search-result").prepend('<p style="border-bottom:1px solid #00ccff;text-align:left;margin-bottom:2em;"><span class="note-name">&nbsp;'+'<%=rows[i].name%>'+'</span><br><a href="#" class="note-delete btn btn-default" data-toggle="modal" data-target="#'+'<%=rows[i].id%>'+'">Delete</a><a href="/profile/readnote/'+'<%=rows[i].id%>'+'" class="note-read btn btn-default">Open</a></p>');
-                                
-                                p++;                           
-                            }
-                        <% } %>
-                     });
+                    $('.search-btn').removeClass("glyphicon-pencil").addClass("glyphicon-remove");
+                    if(q != ""){
+                      $('.list').css('display','none');
+                    } else {
+                      $('.list').css('display','block');
+                    }
+                    $('#search-result').css('display','block').html("");
+                    
+                    var count = [];
+                    for(i=0;i<rows.length;i++){
+                      count.push({ index:i , val:0 });
+                      for(j=0 ; j<q.length ; j++){
+                        if(rows[i].name.search(q[j]) != -1){
+                          count[i].val++;                 
+                        }
+                      }
+                    }
                         
-                    $("#search-btn").click(function(){
-                        $('#search-note').val("")
-                        $('.search-btn').removeClass("glyphicon-remove").addClass("glyphicon-pencil");
-                        $('.list').css('display','block');
-                        $('#search-result').css('display','none').html("");
-                    });    
+                    var min , temp;
+                    for (i = 0; i < count.length; ++i)
+                    {
+                      min = i;
+                      for (j = i+1; j < count.length; ++j)
+                      {
+                        if(count[j].val<count[min].val){min=j;}
+                      }
+                      if(min!=i){
+                        temp = count[i];
+                        count[i] = count[min];
+                        count[min] = temp;
+                      }
+                    }
+                          
+                          
+                    for (i = count.length-1; i>=0; --i)
+                    {
+                      if(count[i].val != 0){
+                        $("#search-result").append('<p style="border-bottom:1px solid   #00ccff;text-align:left;margin-bottom:2em;"><span class="note-  name">&nbsp;'+rows[count[i].index].name+'</span><br><a href="#" class="note-delete btn btn-default" data-toggle="modal" data- target="#'+rows[count[i].index].id+'">Delete</a><a  href="/profile/readnote/'+rows[count[i].index].id+'" class="note- read btn btn-default">Open</a></p>');
+                      }
+                    }
+                              
+                        
+                        
+                  });
+                        
+                  $("#search-btn").click(function(){
+                    $('#search-note').val("");
+                    $('#search-note-group').hide();
+                    $('#search-trigger-btn').show();
+                    $('.search-btn').removeClass("glyphicon-remove").addClass("glyphicon- pencil");
+                    $('.list').css('display','block');
+                    $('#search-result').css('display','none').html("");
+                  });    
                             
                 });
-                </script>
+              </script>
                 
                 <div id="search-result"></div>
                 
@@ -180,6 +230,7 @@
     <% } %>
     
 </div>  
+  <div class="col-lg-4"></div>
 </div>
     
 </body>

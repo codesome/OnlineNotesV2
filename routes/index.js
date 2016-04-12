@@ -54,6 +54,7 @@ router.get('/delete/secure/public' , function(req,res){
 
 router.get('/', function(req, res, next) {
     if(!obj.siStatus(req,obj,obj.cookieKey)){
+      console.log("1123123");
         res.render('index' , {superroremail:"",superrorusername:"",loginerror:"",signupmodal:"hide",loginmodal:"hide",signupfield:""});
     }
     else{
@@ -179,6 +180,31 @@ router.post('/login' , function(req,res,next){
                     res.render('index' , {superroremail:"",loginerror:"Invalid Credentials",signupmodal:"hide",loginmodal:"show",signupfield:""});;
                 }
             });
+});
+
+router.get('/test', function(req, res, next) {
+    
+    if(!obj.siStatus(req,obj,obj.cookieKey)){
+        res.redirect('/')
+    }
+    else{
+        var userid = obj.siStatus(req,obj,obj.cookieKey); 
+        
+        con.query('select userkey from users where id=?' , [userid] ,function(err,row){
+            var key = row[0].userkey;
+            con.query(
+                "select * from "+userid , 
+                function(err,rows){
+                    var i;
+                    for(i=0;i<rows.length;i++){
+                        rows[i].name = obj.decrypt(rows[i].name,key) 
+                    }
+                    res.send(rows);
+                });
+        });
+        
+    }
+  
 });
 
 module.exports = router;
